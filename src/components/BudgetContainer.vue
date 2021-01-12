@@ -2,25 +2,56 @@
   <div class="container p-0 border bg-light rounded">
     <!-- Budget Header -->
     <budget-header
-      :title="budget.title"
+      :title="!expendituresView ? budget.title : 'Expenditures'"
       :spent="budget.actualExpenses"
       :income="budget.income"
       :budgeted="budget.budgetedExpenses"
       @form-requested="showForm"
+      @expenditures-requested="switchView"
     ></budget-header>
     <!-- Budget Body -->
-    <category-container
-      v-for="category in budget.categories"
-     :key="category.label"
-     :category="category"
-     @form-requested="showForm"
-    ></category-container>     
+    <transition
+      mode="out-in"
+      enter-active-class="animate__animated animate__fadeInUp"
+    >
+      <div
+        v-if="!expendituresView" key="budgetView"
+      >
+        <category-container
+          v-for="category in budget.categories"
+          :key="category.label"
+          :category="category"
+          @form-requested="showForm"
+          @log-modal-requested="showExpenditureModal"
+          class="my-2"
+        ></category-container>
+      </div>
+      <div
+        v-else key="expenditureView"
+        style="min-height:100vh-100px"
+        class="d-flex"
+      >
+        <expenses-container
+          class="ml-auto"
+          :expenditures="budget.allExpenditures"
+          @delete-requested="deleteExpenditure"
+          @ee-modal-requested="showExpenditureModal"
+        ></expenses-container>
+      </div>
+    </transition>   
+    <expenditure-modal
+      :title="expenditureModal.modalTitle"
+      :expenditure="tempStorage.expenditure"
+      @log-expenditure="logExpenditure"
+    />
   </div> 
 </template>
 
 <script>
-import BudgetHeader from './BudgetHeader.vue'
-import CategoryContainer from './CategoryContainer.vue'
+import BudgetHeader from './BudgetHeader.vue';
+import CategoryContainer from './CategoryContainer.vue';
+import ExpenditureModal from './ExpenditureModal.vue';
+import ExpensesContainer from './ExpensesContainer.vue'
 
 //Supply LineItem class for creating new line items
 export class LineItem {
@@ -43,7 +74,9 @@ export class LineItem {
       },
       vModels: {
         label: "",
-        amount: 0
+        amount: 0,
+        merchant: "",
+        notes: ""
       }
     }
   }
@@ -68,11 +101,23 @@ export default {
   },
   components: {
     BudgetHeader,
-    CategoryContainer
+    CategoryContainer,
+    ExpensesContainer,
+    ExpenditureModal
   },
   data() {
     return {
-      viewExpenditures: false
+      expendituresView: false,
+
+      expenditureModal: {
+        modalTitle: "Log an Expense",
+        modalTarget: "log"
+      },
+
+      tempStorage: {
+        expenditure: {},
+        expCategory: "",
+      }
     }
   },
   methods: {
@@ -125,7 +170,61 @@ export default {
           this.$refs.input_newIncome.$el.focus();
         })
       }
+    },
+    switchView() {
+      this.expendituresView = !this.expendituresView;
+      if (this.expendituresView) {
+        this.expenditureModal.modalTitle = "Edit Expense"
+        this.expenditureModal.modalTarget = "edit"
+      } else {
+        this.expenditureModal.modalTitle = "Log an Expense"
+        this.expenditureModal.modalTarget = "log"
+      }
+    },
+    locateExpenditure(expenditure) {
+      let location;
+
+      let category = this.budget.categories.find(c => c.label === expenditure.category);
+
+      for (let l = 0; l < category.lineItems.length; l++) {
+        for (let e = 0; e < category.lineItems[l].expenditures.length; e++) {
+          location = category.lineItems[l].expenditures;
+          let currentExpenditure = category.lineItems[l].expenditures[e];
+
+          if (currentExpenditure.timeLogged === expenditure.timeLogged) {
+            return location;
+          }
+        }
+      }
+    },
+    showExpenditureModal(expenditure) {
+      this.tempStorage.expenditure = expenditure;
+
+      this.$nextTick(function() {
+        this.$bvModal.show('expenditureModal');
+      })
+      
+    },
+    logExpenditure(merchant, amount, notes) {
+      let expenditure = this.locateExpenditure(this.tempStorage.expenditure)
+        .find(e => e.timeLogged === this.tempStorage.expenditure.timeLogged);
+      
+      expenditure.merchant = merchant;
+      expenditure.amount = amount;
+      expenditure.notes = notes;
+    },
+    deleteExpenditure(expenditure) {
+      let expendituresArray = this.locateExpenditure(expenditure);
+      expendituresArray.splice(expendituresArray.indexOf(expenditure), 1);
+      
     }
+  },
+  mounted() {
+    this.$root.$on('bv::modal::hide', (bvEvent) => {
+      if (this.expenditureModal.modalTarget === "log" && bvEvent.trigger !== 'ok') {
+        this.deleteExpenditure(this.tempStorage.expenditure);
+      }
+    })
   }
 }
 </script>

@@ -6,7 +6,10 @@
       <!-- Budget Name, Header Left -->
       <div class="col justify-content-start h2"> {{ title }} </div>
       <!-- Spending Progress, Header Center -->
-      <div class="col d-flex justify-content-center">
+      <div
+        class="col d-flex justify-content-center"
+        @click="$emit('expenditures-requested')"
+      >
         <radial-progress-bar
           :diameter="100"
           :completed-steps="Number(calcProgress(spent, budgeted))"
@@ -16,7 +19,7 @@
           :animate-speed="300"
           :start-color="calcProgress(spent, budgeted) <= 100 ? '#5cb85c' : '#d9534f'"
           :stop-color="calcProgress(spent, budgeted) <= 100 ? '#5cb85c' : '#d9534f'"
-          v-b-tooltip.hover.left title="Click to view expenditures"
+          v-b-tooltip.hover.left title="Click to toggle views"
         ></radial-progress-bar>
       </div>
       <!-- Summary Details, Header Right -->    

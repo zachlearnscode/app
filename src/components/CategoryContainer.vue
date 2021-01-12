@@ -1,5 +1,5 @@
 <template>
- <div class="container bg-white my-2 py-1">
+  <div class="container bg-white">
   <!-- Header Row -->
     <div class="row">
       <div
@@ -18,10 +18,11 @@
     <!-- Line Items -->
     <line-item-row
       v-for="(lineItem, index) in category.lineItems"
+      v-on="$listeners"
      :key="index"
      :ref="'lineItem'"
      :lineItem="lineItem"
-      v-on="$listeners"
+     :category="category.label"
       @cancel-form="removeLineItem(lineItem)"
       @delete-requested="removeLineItem"
     ></line-item-row>

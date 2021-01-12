@@ -44,6 +44,9 @@ Vue.use(ModalPlugin)
 Vue.use(ButtonPlugin)
 Vue.use(TooltipPlugin)
 
+//Import Animate.css
+import 'animate.css';
+
 Vue.config.productionTip = false
 
 new Vue({

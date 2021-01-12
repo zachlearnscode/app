@@ -1,28 +1,18 @@
 <template>
   <div id="app">
-   <!-- <nav class="navbar navbar-dark bg-primary">
-      <div class="container-fluid d-flex flex-row align-items-center">
-        <div class="navbar-brand d-flex flex-row align-items-center">
-          <div
-            style="width:50px;height:50px"
-            class="rounded-circle bg-white d-flex justify-content-center align-items-center mr-3">
-            <font-awesome-icon icon="money-bill-wave-alt" class="text-success" style="font-size:1.5rem"/>
-          </div>          
-          <div class="navbar-brand" style="font-size:2rem">CRUDdy Budget</div>
-        </div>
-        <div class="navbar-nav d-flex flex-row" style="font-size:1.5rem">
-          <span class="nav-item nav-link m-2">Create</span>
-        </div>
-      </div>
-    </nav> -->
+    <navbar class="mb-3 fixed-top" />
     <div
       v-for="budget in budgets" :key="budget.title"
       class="d-flex flex-row justify-content-center align-items-center"
     >
       <budget-container
         v-if="budget.active" :budget="budget"
+        style="margin-top:90px;"
       >
       </budget-container>
+      <div v-else>
+        No Budgets to Show
+      </div>
     </div>
   </div>
 </template>
@@ -75,7 +65,22 @@ class Budget {
       }
     }
     return total
+  }
 
+  get allExpenditures() {
+    let lineItemsArr = [];
+    let allExpenditures = [];
+
+    this.categories.filter(c => c.lineItems.length > 0)
+      .forEach(c => lineItemsArr.push(...c.lineItems));
+    
+    lineItemsArr.forEach(l => {
+      for (let e = 0; e < l.expenditures.length; e++) {
+        allExpenditures.push(l.expenditures[e])
+      }
+    })
+
+    return allExpenditures
   }
 }
 
@@ -86,9 +91,9 @@ class BudgetCategory {
   }
 }
 
-class LineItem {
-  constructor() {
-    this.label = "",
+export class LineItem {
+  constructor(label) {
+    this.label = label,
     this.budgeted = 0,
     this.expenditures = [],
     this.editing = {
@@ -123,13 +128,16 @@ class LineItem {
   }
 }
 
-class Expenditure {
-  constructor(merchant, amount, notes) {
-    this.dateLogged = new Date()
-      .toLocaleDateString(),
+export class Expenditure {
+  constructor(merchant, amount, notes, category) {
     this.merchant = merchant,
     this.amount = amount,
-    this.notes = notes
+    this.notes = notes,
+    this.dateLogged = new Date()
+      .toLocaleDateString(),
+    this.category = category,
+    this.timeLogged = new Date()
+      .getTime()
   }
 }
 
@@ -144,18 +152,22 @@ testLineItem.expenditures.push(new Expenditure);
 let testExpenditure = testLineItem.expenditures[0];
 testExpenditure.merchant ="Test Merchant";
 testExpenditure.amount = 200;
+testExpenditure.category = "Food"
 testBudget.categories[2].lineItems.push(new LineItem);
 let newTestLineItem = testBudget.categories[2].lineItems[0];
 newTestLineItem.label = "Test";
 newTestLineItem.budgeted = 400;
 testBudget.active = true;
 
+import Navbar from './components/Navbar.vue'
 import BudgetContainer from './components/BudgetContainer.vue';
+
 
 export default {
   name: 'App',
   components: {
-    BudgetContainer
+    BudgetContainer,
+    Navbar
   },
   data() {
     return {
@@ -187,5 +199,8 @@ export default {
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
+  }
+  .budgetContainer {
+    max-height:calc(100vh - 84px);
   }
 </style>

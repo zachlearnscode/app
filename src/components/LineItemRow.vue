@@ -12,21 +12,22 @@
         <div
           class="d-flex flex-row w-50"
           v-if="!lineItem.editing.toggles.inline.newLabelForm"
-          @click.capture="$emit('form-requested', lineItem, 'label', $refs)"
+          @click.self="$emit('form-requested', lineItem, 'label', $refs)"
           @mouseenter="lineItem.editing.toggles.inline.logExpIcon = true"
           @mouseleave="lineItem.editing.toggles.inline.logExpIcon = false"
         >
-          <div> {{lineItem.label}} </div> 
+          <div
+            @click.self="$emit('form-requested', lineItem, 'label', $refs)"
+          > {{lineItem.label}} </div> 
           <button
             type="button"
             class="btn btn-link p-0"
             style="margin-left:5px;height:23px;"
-            @click="openLEModal"
             v-show="lineItem.editing.toggles.inline.logExpIcon"
+            @click="createExpenditure"
           >
             <font-awesome-icon icon="plus"/>
           </button>
-          <log-expense-modal></log-expense-modal>
         </div>
         <!-- Form (editing label) -->
         <edit-details-form
@@ -110,14 +111,23 @@
 <script>
 import EditDetailsForm from './EditDetailsForm.vue';
 import ProgressBar from './ProgressBar.vue';
-import LogExpenseModal from './LogExpenseModal.vue';
+
+class Expenditure {
+  constructor(merchant, amount, notes, category) {
+    this.merchant = merchant,
+    this.amount = amount,
+    this.notes = notes,
+    this.dateLogged = new Date().toLocaleDateString() ,
+    this.category = category,
+    this.timeLogged = new Date().getTime()
+  }
+}
 
 export default {
-  props: ['lineItem'],
+  props: ['lineItem', 'category'],
   components: {
     ProgressBar,
-    EditDetailsForm,
-    LogExpenseModal
+    EditDetailsForm
   },
   data() {
     return {
@@ -162,24 +172,12 @@ export default {
           alert("Something went wrong." + err)
         })
     },
-    openLEModal() {
-      this.$nextTick(function() {
-        this.lineItem.editing.toggles.inline.newLabelForm = false;
-        this.$bvModal.show('logExpenseModal');
-      })   
+    createExpenditure() {
+      this.lineItem.expenditures.push(new Expenditure('', 0, '', this.category));
+      let expenditure = this.lineItem.expenditures[this.lineItem.expenditures.length - 1];
+
+      this.$emit('log-modal-requested', expenditure)
     }
-    /*logExpenditure(merchant, amount, notes) {
-      let category = this.budget.categories
-        .find(c => c.label === this.tempStorage.category.label);
-      
-      let lineItem = category.lineItems
-        .find(l => l.label === this.tempStorage.lineItem.label);
-
-      lineItem.expenditures.push(new Expenditure(merchant, amount, notes));
-
-      this.tempStorage.category = {};
-      this.tempStorage.lineItem = {};
-    }*/
   },
   filters: {
     currency: function(num) {
