@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     toggleFullWidth(obj) {
-      if (!this.obj.plannedIncome) {
+      if (obj.editing.toggles) {
         return obj.editing.toggles.inline.newLineItemForm ? 'w-100 justify-content-between' : ''
       } else {
         return ''

@@ -51,46 +51,7 @@
 import BudgetHeader from './BudgetHeader.vue';
 import CategoryContainer from './CategoryContainer.vue';
 import ExpenditureModal from './ExpenditureModal.vue';
-import ExpensesContainer from './ExpensesContainer.vue'
-
-//Supply LineItem class for creating new line items
-export class LineItem {
-  constructor(label) {
-    this.label = label,
-    this.budgeted = 0,
-    this.expenditures = [],
-    this.editing = {
-      toggles: {
-        inline: {
-          newLineItemForm: false,
-          newLabelForm: false,
-          newAmountForm: false,
-          logExpIcon: false
-        },
-        modals: {
-          deleteLineItem: false,
-          logExpenditure: false
-        }        
-      },
-      vModels: {
-        label: "",
-        amount: 0,
-        merchant: "",
-        notes: ""
-      }
-    }
-  }
-  get spent() {
-    let spent = 0;
-    if (this.expenditures.length) {
-      for (let e = 0; e < this.expenditures.length; e++) {
-        spent += this.expenditures[e].amount;
-      }
-    } 
-    return spent
-  }
-}
-
+import ExpensesContainer from './ExpensesContainer.vue';
 
 export default {
   props: {
@@ -142,11 +103,11 @@ export default {
         this.budget.income.editing.form = false;
       }
     },
-    showForm(obj, target, refs) { 
-      
-      this.$refs = refs;
+    showForm(obj, target, refs) {
          
       this.falsifyForms();
+
+      this.$refs = refs;
 
       if (target === "label") {
         obj.editing.toggles.inline.newLabelForm = true;       //Open form
@@ -180,6 +141,8 @@ export default {
         this.expenditureModal.modalTitle = "Log an Expense"
         this.expenditureModal.modalTarget = "log"
       }
+
+      console.log(this.expenditureModal)
     },
     locateExpenditure(expenditure) {
       let location;
@@ -219,10 +182,14 @@ export default {
       
     }
   },
-  mounted() {
+  mounted() { //Delete expenditures that are created but cancelled
     this.$root.$on('bv::modal::hide', (bvEvent) => {
-      if (this.expenditureModal.modalTarget === "log" && bvEvent.trigger !== 'ok') {
-        this.deleteExpenditure(this.tempStorage.expenditure);
+      if (this.expenditureModal.modalTarget === "log") {
+        if (bvEvent.trigger === "cancel" ||
+            bvEvent.trigger === "backdrop" ||
+            bvEvent.trigger === "headerclose") {
+          this.deleteExpenditure(this.tempStorage.expenditure);
+        }
       }
     })
   }

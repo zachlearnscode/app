@@ -41,7 +41,7 @@
 
 <script>
 import LineItemRow from './LineItemRow.vue';
-import { LineItem } from './BudgetContainer.vue';
+import { LineItem } from '@/modules/BudgetClasses.js';
 
 
 export default {

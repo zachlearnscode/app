@@ -42,7 +42,7 @@
           :obj="income"
           :target="'income'"
           class="justify-content-end"
-          @cancel-form="budget.editing.income.toggleIncomeInput = false"
+          @cancel-form="income.editing.form = false"
           @change-submitted="updateIncome"
         >
           <money-input

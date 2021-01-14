@@ -10,7 +10,7 @@
     <div
       v-for="(expenditure, index) in expenditures" :key="index"
       class="expenditureRow px-1"
-      @click="$emit('ee-modal-requested', expenditure, 'edit')"
+      @click="$emit('ee-modal-requested', expenditure)"
     >
       <hr class="my-1">
         <div

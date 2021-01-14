@@ -16,9 +16,7 @@
           @mouseenter="lineItem.editing.toggles.inline.logExpIcon = true"
           @mouseleave="lineItem.editing.toggles.inline.logExpIcon = false"
         >
-          <div
-            @click.self="$emit('form-requested', lineItem, 'label', $refs)"
-          > {{lineItem.label}} </div> 
+          {{lineItem.label}}
           <button
             type="button"
             class="btn btn-link p-0"
@@ -111,17 +109,7 @@
 <script>
 import EditDetailsForm from './EditDetailsForm.vue';
 import ProgressBar from './ProgressBar.vue';
-
-class Expenditure {
-  constructor(merchant, amount, notes, category) {
-    this.merchant = merchant,
-    this.amount = amount,
-    this.notes = notes,
-    this.dateLogged = new Date().toLocaleDateString() ,
-    this.category = category,
-    this.timeLogged = new Date().getTime()
-  }
-}
+import { Expenditure } from '@/modules/BudgetClasses.js';
 
 export default {
   props: ['lineItem', 'category'],
@@ -145,7 +133,9 @@ export default {
         obj.editing.toggles.inline.newAmountForm = false;
         obj.editing.vModels.amount = 0;
       } else if (target === "newLineItem") {
-        obj.label = obj.editing.vModels.label;
+        if (obj.editing.vModels.label !== "") {
+          obj.label = obj.editing.vModels.label;
+        }        
         obj.budgeted = obj.editing.vModels.amount;
         obj.editing.toggles.inline.newLineItemForm = false;
         obj.editing.vModels.label = "";
