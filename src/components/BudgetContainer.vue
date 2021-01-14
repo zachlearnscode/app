@@ -15,6 +15,7 @@
       enter-active-class="animate__animated animate__fadeInUp"
     >
       <div
+        id="bodyContainer"
         v-if="!expendituresView" key="budgetView"
       >
         <category-container
@@ -196,6 +197,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+  #bodyContainer {
+    max-height: 700px;
+    overflow-y: scroll;
+  } 
 
 </style>

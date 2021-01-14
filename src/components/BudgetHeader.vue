@@ -102,8 +102,7 @@ export default {
   },
   filters: {
     currency: function(num) {
-      let number = num;
-      return "$" + number.toLocaleString("en-US");
+      return num.toLocaleString("en-US", {style: 'currency', currency: 'USD'});
     }
   }
 }
