@@ -1,19 +1,16 @@
 <template>
   <div id="app">
-    <navbar class="mb-3" />
-    <button
-      class="btn btn-primary"
-      @click="createBudget"
-    >Create New Budget</button>
+    <navbar
+      :budgets="budgets"
+      @create-budget="createBudget"
+      class="px-5 w-25"
+    />
     <div
-      v-for="budget in budgets" :key="budget.title"
-      class="d-flex flex-row justify-content-center align-items-center"
+      class="d-flex justify-content-center align-items-start w-75 my-3"
     >
       <budget-container
-        :budget="budget"
-        style="margin-top:90px;"
-      >
-      </budget-container>
+        :budget="activeBudget"
+      />
     </div>
   </div>
 </template>
@@ -27,17 +24,29 @@ import { Budget } from './modules/BudgetClasses.js';
 export default {
   name: 'App',
   components: {
-    BudgetContainer,
-    Navbar
+    Navbar,
+    BudgetContainer    
   },
   data() {
     return {
      budgets: []
     }
   },
+  computed: {
+    activeBudget() {
+      return this.budgets.find(b => b.active)
+    }
+  },
   methods: {
-    createBudget() {
-      this.budgets.push(new Budget());
+    createBudget(budgetTitle) {
+      let newBudget = new Budget(budgetTitle);
+      newBudget.active = true;
+
+      if (this.budgets.length > 0) {
+        this.budgets.find(b => b.active).active = false;
+      }      
+
+      this.budgets.push(newBudget);
     }
   }
 }
@@ -66,5 +75,10 @@ export default {
   }
   .budgetContainer {
     max-height:calc(100vh - 84px);
+  }
+  #app {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
   }
 </style>

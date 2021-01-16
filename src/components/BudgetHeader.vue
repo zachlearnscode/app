@@ -2,6 +2,7 @@
    <div
       class="row mx-0 bg-light d-flex flex-row
         justify-content-center align-items-center"
+      style="height:13%"
     >
       <!-- Budget Name, Header Left -->
       <div class="col justify-content-start h2"> {{ title }} </div>
@@ -34,7 +35,9 @@
           <span class="text-muted">
             Planned Income:
           </span>
-          <span class="h3 font-weight-bold ml-3 my-0"
+          <span
+            class="h3 font-weight-bold ml-3 my-0"
+            :class="income.plannedIncome === 0 ? 'text-danger' : ''"
           > {{ income.plannedIncome | currency }} </span>
         </div>
         <edit-details-form

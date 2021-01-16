@@ -1,29 +1,45 @@
 <template>
-  <nav class="navbar navbar-dark bg-primary">
-    <div class="container-fluid d-flex flex-row align-items-center">
-      <div class="navbar-brand d-flex flex-row align-items-center">
-        <div
-          style="width:50px;height:50px"
-          class="rounded-circle bg-white d-flex justify-content-center align-items-center mr-3">
-          <font-awesome-icon icon="money-bill-wave-alt" class="text-success" style="font-size:1.5rem"/>
-        </div>          
-        <div class="navbar-brand" style="font-size:2rem">CRUDdy Budget</div>
+  <nav class="
+        navbar
+        navbar-dark
+        bg-success
+        d-flex
+        flex-column
+        justify-content-start
+        align-items-center
+        "
+  >
+    <div class="navbar-brand d-flex flex-column align-items-end">
+      <div class="d-flex flex-row align-items-center">
+        <span class="h1">All Bucks</span>
+        <font-awesome-icon icon="money-bill-wave-alt" class="text-white h1 ml-3" />
       </div>
-      <div class="navbar-nav d-flex flex-row" style="font-size:1.5rem">
-        <span class="nav-item nav-link m-2 active">Current Budget</span>
-        <span class="nav-item nav-link m-2">Create</span>
-        <span class="nav-item nav-link m-2">Select</span>
-      </div>
+      <span class="h3 font-weight-light">Know your worth.</span>
     </div>
+
+    <budget-selector :budgets="budgets" v-on="$listeners" class="mt-5"></budget-selector>      
   </nav>
 </template>
 
 <script>
+import BudgetSelector from './BudgetSelector.vue'
 export default {
+  components: {
+    BudgetSelector
+  },
+  props: ['budgets'],
+  data() {
+    return {
+      
+    }
+  }
 
 }
 </script>
 
-<style>
+<style scoped>
+nav {
+  height: 100vh;
+}
 
 </style>

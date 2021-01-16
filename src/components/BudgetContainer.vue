@@ -1,5 +1,5 @@
 <template>
-  <div class="container p-0 border bg-light rounded">
+  <div class="container p-0 border bg-light rounded h-100">
     <!-- Budget Header -->
     <budget-header
       :title="!expendituresView ? budget.title : 'Expenditures'"
@@ -199,7 +199,7 @@ export default {
 
 <style scoped>
   #bodyContainer {
-    max-height: 700px;
+    max-height: 87%;
     overflow-y: scroll;
   } 
 

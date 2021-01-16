@@ -9,6 +9,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCaretRight } from '@fortawesome/free-solid-svg-icons'
+import { faCaretLeft } from '@fortawesome/free-solid-svg-icons'
 import { faMoneyBillWaveAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -16,6 +18,8 @@ library.add(faPlus)
 library.add(faTimes)
 library.add(faCheck)
 library.add(faMoneyBillWaveAlt)
+library.add(faCaretRight)
+library.add(faCaretLeft)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
