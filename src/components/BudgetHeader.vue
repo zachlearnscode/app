@@ -5,23 +5,28 @@
       style="height:13%"
     >
       <!-- Budget Name, Header Left -->
-      <div class="col justify-content-start h2"> {{ title }} </div>
+      <div class="col justify-content-start h1 font-weight-light"> {{ title }} </div>
       <!-- Spending Progress, Header Center -->
       <div
         class="col d-flex justify-content-center"
         @click="$emit('expenditures-requested')"
       >
-        <radial-progress-bar
-          :diameter="100"
-          :completed-steps="Number(calcProgress(spent, budgeted))"
-          :total-steps="100"
-          :stroke-width="15"
-          :inner-stroke-width="10"
-          :animate-speed="300"
-          :start-color="calcProgress(spent, budgeted) <= 100 ? '#5cb85c' : '#d9534f'"
-          :stop-color="calcProgress(spent, budgeted) <= 100 ? '#5cb85c' : '#d9534f'"
-          v-b-tooltip.hover.left title="Click to toggle views"
-        ></radial-progress-bar>
+        <transition
+          appear="true"
+          enter-active-class="animate__animated animate__bounceInDown"
+        >
+          <radial-progress-bar
+            :diameter="120"
+            :completed-steps="Number(calcProgress(spent, budgeted))"
+            :total-steps="100"
+            :stroke-width="20"
+            :inner-stroke-width="15"
+            :animate-speed="300"
+            :start-color="calcProgress(spent, budgeted) <= 100 ? '#5cb85c' : '#d9534f'"
+            :stop-color="calcProgress(spent, budgeted) <= 100 ? '#5cb85c' : '#d9534f'"
+            v-b-tooltip.hover.left title="Click to toggle views"
+          ></radial-progress-bar>
+        </transition>
       </div>
       <!-- Summary Details, Header Right -->    
       <div class="col d-flex flex-column justify-content-end">
@@ -111,6 +116,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+  .animate__animated.animate__bounceInDown {
+    animation-delay: .5s;
+  }
 
 </style>

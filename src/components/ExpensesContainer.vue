@@ -1,6 +1,6 @@
 <template>
 
-  <div class="mainDiv container pt-3 mt-2 mx-0 rounded bg-white">
+  <div class="mainDiv container-fluid pt-3 mt-2 mx-0 rounded bg-white">
     <div class="row px-1">
       <div class="col h4">Date</div>
       <div class="col h4">Merchant</div>

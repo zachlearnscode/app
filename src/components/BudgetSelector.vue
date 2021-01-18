@@ -25,19 +25,19 @@ export default {
       selectedMonth: null,
       selectedYear: new Date().getFullYear(),
       months: [
-        {value: null, text: "Select a month"},
-        {value: "January", text: "January"},
-        {value: "February", text: "February"},
-        {value: "March", text: "March"},
-        {value: "April", text: "April"},
-        {value: "May", text: "May"},
-        {value: "June", text: "June"},
-        {value: "July", text: "July"},
-        {value: "August", text: "August"},
-        {value: "September", text: "September"},
-        {value: "October", text: "October"},
-        {value: "November", text: "November"},
-        {value: "December", text: "December"}
+        {value: null, text: "Select a month", disabled: true},
+        {value: "January", text: "January", disabled: false},
+        {value: "February", text: "February", disabled: false},
+        {value: "March", text: "March", disabled: false},
+        {value: "April", text: "April", disabled: false},
+        {value: "May", text: "May", disabled: false},
+        {value: "June", text: "June", disabled: false},
+        {value: "July", text: "July", disabled: false},
+        {value: "August", text: "August", disabled: false},
+        {value: "September", text: "September", disabled: false},
+        {value: "October", text: "October", disabled: false},
+        {value: "November", text: "November", disabled: false},
+        {value: "December", text: "December", disabled: false}
       ],
       years: [
         {value: new Date().getFullYear(), text: new Date().getFullYear()},
@@ -46,20 +46,34 @@ export default {
       ]
     }
   },
-  computed: {
-    //
+  watch: {
+    budgets: 'disableOptions',
+    selectedMonth: 'disableOptions',
+    selectedYear: 'disableOptions'
   },
   methods: {
     verifyNewBudget() {
       if (this.selectedMonth !== null) {
         let budgetTitle = this.selectedMonth + ' ' + this.selectedYear;
         if (!this.budgets.find(b => b.title === budgetTitle)) {
-          this.$emit('create-budget', budgetTitle)
+          this.$emit('create-budget', budgetTitle);
         } else {
           console.log('err')
         }
       } else {
         console.log('Month Required');
+      }
+    },
+    disableOptions() {
+      let existing = this.budgets.map(b => b.title);
+      
+      for (let m = 0; m < this.months.length; m++) {
+        if (existing.includes(this.months[m].text + ' ' + this.selectedYear)) {
+          this.months[m].disabled = true;
+          this.months[m].html
+        } else {
+          this.months[m].disabled = false;
+        }
       }
     }
   }

@@ -5,7 +5,10 @@
       @create-budget="createBudget"
       class="px-5 w-25"
     />
-    <div class="w-75 px-5 py-3" style="overflow:hidden">
+    <div class="w-75 px-5 py-3 d-flex align-items-center justify-content-center" style="overflow:hidden">
+      <div v-if="budgets.length === 0">
+        <div class="lead">No budgets to display.</div>
+      </div>
       <transition
         mode="out-in"
         enter-active-class="animate__animated animate__fadeInRightBig"
@@ -53,6 +56,9 @@ export default {
       }      
 
       this.budgets.push(newBudget);
+    },
+    test() {
+      console.log("test")
     }
   }
 }
@@ -91,6 +97,6 @@ export default {
     --animate-duration: 1s;
   }
   .animate__animated.animate__fadeOutRightBig {
-    --animate-duration: 1s;
+    --animate-duration: .75s;
   }
 </style>

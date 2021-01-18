@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow container-fluid p-0 border bg-light rounded h-100">
+  <div class="shadow-sm container-fluid p-2 border bg-light rounded h-100">
     <!-- Budget Header -->
     <budget-header
       :title="!expendituresView ? budget.title : 'Expenditures'"
@@ -25,7 +25,6 @@
             :category="category"
             @form-requested="showForm"
             @log-modal-requested="showExpenditureModal"
-            class="my-2"
             :data-index="index"
           ></category-container>
         </transition-group>
@@ -191,7 +190,7 @@ export default {
     appear(el) {
       let delay = el.dataset.index * 15;
       setTimeout(function() {
-        el.className = "my-2 container-fluid bg-white shadow-sm animate__animated animate__slideInRight"
+        el.className = "my-3 container-fluid bg-white shadow-sm animate__animated animate__slideInRight"
       }, delay);
     }
   },
