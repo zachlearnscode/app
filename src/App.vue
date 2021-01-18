@@ -5,12 +5,18 @@
       @create-budget="createBudget"
       class="px-5 w-25"
     />
-    <div
-      class="d-flex justify-content-center align-items-start w-75 my-3"
-    >
-      <budget-container
-        :budget="activeBudget"
-      />
+    <div class="w-75 px-5 py-3" style="overflow:hidden">
+      <transition
+        mode="out-in"
+        enter-active-class="animate__animated animate__fadeInRightBig"
+        leave-active-class="animate__animated animate__fadeOutRightBig"
+      >
+        <budget-container
+          v-if="budgets.length > 0"
+          :budget="activeBudget"
+          :key="activeBudget.title"
+        />
+      </transition>
     </div>
   </div>
 </template>
@@ -55,7 +61,7 @@ export default {
 <style>
   /* width */
   ::-webkit-scrollbar {
-    width: 7px;
+    width: 3px;
   }
 
   /* Track */
@@ -80,5 +86,11 @@ export default {
     height: 100vh;
     display: flex;
     flex-direction: row;
+  }
+  .animate__animated.animate__fadeInRightBig {
+    --animate-duration: 1s;
+  }
+  .animate__animated.animate__fadeOutRightBig {
+    --animate-duration: 1s;
   }
 </style>

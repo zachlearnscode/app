@@ -1,5 +1,5 @@
 <template>
-  <div class="container p-0 border bg-light rounded h-100">
+  <div class="shadow container-fluid p-0 border bg-light rounded h-100">
     <!-- Budget Header -->
     <budget-header
       :title="!expendituresView ? budget.title : 'Expenditures'"
@@ -10,25 +10,29 @@
       @expenditures-requested="switchView"
     ></budget-header>
     <!-- Budget Body -->
-    <transition
-      mode="out-in"
-      enter-active-class="animate__animated animate__fadeInUp"
-    >
       <div
         id="bodyContainer"
-        v-if="!expendituresView" key="budgetView"
+        v-if="!expendituresView"
+        key="budgetView"
       >
-        <category-container
-          v-for="category in budget.categories"
-          :key="category.label"
-          :category="category"
-          @form-requested="showForm"
-          @log-modal-requested="showExpenditureModal"
-          class="my-2"
-        ></category-container>
+        <transition-group
+          :css="false" :appear="true"
+          @before-appear="beforeAppear" @appear="appear"
+        >
+          <category-container
+            v-for="(category, index) in budget.categories"
+            :key="category.label"
+            :category="category"
+            @form-requested="showForm"
+            @log-modal-requested="showExpenditureModal"
+            class="my-2"
+            :data-index="index"
+          ></category-container>
+        </transition-group>
       </div>
       <div
-        v-else key="expenditureView"
+        v-else
+        key="expenditureView"
         style="min-height:100vh-100px"
         class="d-flex"
       >
@@ -38,14 +42,13 @@
           @delete-requested="deleteExpenditure"
           @ee-modal-requested="showExpenditureModal"
         ></expenses-container>
-      </div>
-    </transition>   
+      </div>  
     <expenditure-modal
       :title="expenditureModal.modalTitle"
       :expenditure="tempStorage.expenditure"
       @log-expenditure="logExpenditure"
     />
-  </div> 
+  </div>
 </template>
 
 <script>
@@ -181,6 +184,15 @@ export default {
       let expendituresArray = this.locateExpenditure(expenditure);
       expendituresArray.splice(expendituresArray.indexOf(expenditure), 1);
       
+    },
+    beforeAppear(el) {
+      el.className = "d-none";
+    },
+    appear(el) {
+      let delay = el.dataset.index * 15;
+      setTimeout(function() {
+        el.className = "my-2 container-fluid bg-white shadow-sm animate__animated animate__slideInRight"
+      }, delay);
     }
   },
   mounted() { //Delete expenditures that are created but cancelled
@@ -200,6 +212,7 @@ export default {
 <style scoped>
   #bodyContainer {
     max-height: 87%;
+    overflow-x: hidden;
     overflow-y: scroll;
   } 
 
