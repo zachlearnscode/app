@@ -1,18 +1,21 @@
 <template>
    <div
-      class="row mx-0 bg-light d-flex flex-row
+      class="row mx-0 mb-3 bg-light d-flex flex-row
         justify-content-center align-items-center"
       style="height:13%"
     >
       <!-- Budget Name, Header Left -->
-      <div class="col justify-content-start h1 font-weight-light"> {{ title }} </div>
+      <div class="col d-flex flex-column justify-content-end h-100">
+        <span class="justify-content-start h1 font-weight-light my-auto"> {{ title }} </span>
+      </div>
+      
       <!-- Spending Progress, Header Center -->
       <div
         class="col d-flex justify-content-center"
         @click="$emit('expenditures-requested')"
       >
         <transition
-          appear="true"
+          :appear="true"
           enter-active-class="animate__animated animate__bounceInDown"
         >
           <radial-progress-bar

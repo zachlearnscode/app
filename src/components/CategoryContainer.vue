@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
   <!-- Header Row -->
     <div class="row">
       <div

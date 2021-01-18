@@ -2,7 +2,7 @@
   <div class="shadow-sm container-fluid p-2 border bg-light rounded h-100">
     <!-- Budget Header -->
     <budget-header
-      :title="!expendituresView ? budget.title : 'Expenditures'"
+      :title="budget.title"
       :spent="budget.actualExpenses"
       :income="budget.income"
       :budgeted="budget.budgetedExpenses"
@@ -10,6 +10,11 @@
       @expenditures-requested="switchView"
     ></budget-header>
     <!-- Budget Body -->
+    <transition
+      mode="out-in"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+    >
       <div
         id="bodyContainer"
         v-if="!expendituresView"
@@ -41,7 +46,8 @@
           @delete-requested="deleteExpenditure"
           @ee-modal-requested="showExpenditureModal"
         ></expenses-container>
-      </div>  
+      </div>
+    </transition>  
     <expenditure-modal
       :title="expenditureModal.modalTitle"
       :expenditure="tempStorage.expenditure"
@@ -190,7 +196,7 @@ export default {
     appear(el) {
       let delay = el.dataset.index * 15;
       setTimeout(function() {
-        el.className = "my-3 container-fluid bg-white shadow-sm animate__animated animate__slideInRight"
+        el.className = "mb-3 container-fluid bg-white shadow-sm animate__animated animate__slideInRight"
       }, delay);
     }
   },
@@ -213,6 +219,12 @@ export default {
     max-height: 87%;
     overflow-x: hidden;
     overflow-y: scroll;
-  } 
+  }
+  .animate__animated.animate__fadeIn {
+    animation-duration: .25s;
+  }
+  .animate__animated.animate__fadeOut {
+    animation-duration: .25s;
+  }
 
 </style>

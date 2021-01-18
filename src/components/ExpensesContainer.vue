@@ -1,35 +1,34 @@
 <template>
-
-  <div class="mainDiv container-fluid pt-3 mt-2 mx-0 rounded bg-white">
-    <div class="row px-1">
-      <div class="col h4">Date</div>
-      <div class="col h4">Merchant</div>
-      <div class="col h4">Amount</div>
-      <div class="col h4">Notes</div>
-    </div>
-    <div
-      v-for="(expenditure, index) in expenditures" :key="index"
-      class="expenditureRow px-1"
-      @click="$emit('ee-modal-requested', expenditure)"
-    >
-      <hr class="my-1">
-        <div
-          class="row d-flex align-items-center"
-          @click.right.prevent="openDeleteExpenseModal(expenditure)"
-        >
-          <div class="col"> {{ expenditure.dateLogged }} </div>
-          <div class="col d-flex flex-column">
-            <div> {{ expenditure.merchant }} </div>
-            <div> {{ expenditure.category }} </div>
-          </div>
-          <div class="col"> {{ expenditure.amount | currency }} </div>
-          <div class="col"> {{ expenditure.notes }} </div>
+  <div class="container-fluid px-0">
+    <b-card body-tag="" class="container-fluid px-0 mb-2">
+      <template v-slot:header>
+        <div class="row px-0">
+          <div class="col lead">Date</div>
+          <div class="col lead">Merchant</div>
+          <div class="col lead">Spent</div>
+          <div class="col lead">Notes</div>
         </div>
-      <hr class="my-2">
-    </div>
-  </div>
-
-  
+      </template>
+    </b-card>
+    <transition-group
+      :css="false" :appear="true"
+      @before-appear="beforeAppear" @appear="appear"
+    >
+      <b-card
+        v-for="(expenditure, index) in expenditures"
+        :key="expenditure.timeLogged" :data-index="index"
+      >
+        <b-card-body class="p-0">
+          <div class="row">
+            <div class="col">{{expenditure.dateLogged}}</div>
+            <div class="col">{{expenditure.merchant}}</div>
+            <div class="col">{{expenditure.amount | currency}}</div>
+            <div class="col">{{expenditure.notes}}</div>
+          </div>
+        </b-card-body>
+      </b-card>
+    </transition-group>
+  </div>  
 </template>
 
 <script>
@@ -53,12 +52,20 @@ export default {
         .catch(err => {
           alert("Something went wrong." + err)
         })
+    },
+    beforeAppear(el) {
+      el.className = "d-none";
+    },
+    appear(el) {
+      let delay = el.dataset.index * 15;
+      setTimeout(function() {
+        el.className = "container-fluid p-0 shadow-sm animate__animated animate__slideInUp"
+      }, delay);
     }
   },
   filters: {
     currency: function(num) {
-      let number = num;
-      return "$" + number.toLocaleString("en-US");
+      return num.toLocaleString("en-US", {style: 'currency', currency: 'USD'});
     }
   }
 
@@ -66,11 +73,5 @@ export default {
 </script>
 
 <style>
-  .mainDiv {
-    min-height: calc(100vh - 84px);
-  }
-  .expenditureRow:nth-child(even) {
-    background-color: #f8f9fa;
-  }
 
 </style>
