@@ -37,7 +37,6 @@
       <div
         v-else
         key="expenditureView"
-        style="min-height:100vh-100px"
         class="bodyContainer d-flex"
       >
         <expenses-container

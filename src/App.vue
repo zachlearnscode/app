@@ -3,9 +3,10 @@
     <navbar
       :budgets="budgets"
       @create-budget="createBudget"
+      @activate-budget="activateBudget"
       class="px-5 w-25"
     />
-    <div class="w-75 m-3 d-flex align-items-center justify-content-center" style="overflow:hidden">
+    <div class="w-75 m-4 d-flex align-items-center justify-content-center" style="overflow:hidden">
       <div v-if="budgets.length === 0">
         <div class="lead">No budgets to display.</div>
       </div>
@@ -26,7 +27,7 @@
 
 <script>
 
-import Navbar from './components/Navbar.vue'
+import Navbar from './components/Navbar.vue';
 import BudgetContainer from './components/BudgetContainer.vue';
 import { Budget } from './modules/BudgetClasses.js';
 
@@ -34,7 +35,7 @@ export default {
   name: 'App',
   components: {
     Navbar,
-    BudgetContainer    
+    BudgetContainer   
   },
   data() {
     return {
@@ -43,7 +44,12 @@ export default {
   },
   computed: {
     activeBudget() {
-      return this.budgets.find(b => b.active)
+      if (this.budgets.length) {
+        return this.budgets.find(b => b.active);
+      } else {
+        return null;
+      }
+      
     }
   },
   methods: {
@@ -57,8 +63,14 @@ export default {
 
       this.budgets.push(newBudget);
     },
-    test() {
-      console.log("test")
+    activateBudget(budgetTitle) {
+      let toActivate = this.budgets.find(b => b.title === budgetTitle);
+
+      if (this.budgets.length > 0) {
+        this.budgets.find(b => b.active).active = false;
+      }
+
+      toActivate.active = true;
     }
   }
 }

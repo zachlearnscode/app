@@ -15,6 +15,24 @@
         </template>
       </b-card>
     </transition>
+    <div v-if="!expenditures.length">
+      <transition
+        appear
+        appear-active-class="animate__animated animate__fadeInUp"
+      >
+        <b-card class="container-fluid bg-white p-0 mb-2">
+          <b-card-body class="p-0">
+            <div class="row">
+              <div
+                class="col lead text-muted d-flex justify-content-center"
+              >
+                No expenditures to display.
+              </div>
+            </div>
+          </b-card-body>
+        </b-card>
+      </transition>
+    </div>
     <div>
       <transition-group
         :appear="true" @before-appear="beforeAppear" @appear="appear"
@@ -82,8 +100,5 @@ export default {
 </script>
 
 <style scoped>
-  .moveClass {
-    transition: position .5s ease;
-  }
 
 </style>

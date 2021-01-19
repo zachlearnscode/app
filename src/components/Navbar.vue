@@ -17,14 +17,19 @@
       <span class="h3 font-weight-light">Know your worth.</span>
     </div>
 
-    <budget-selector :budgets="budgets" v-on="$listeners" class="mt-5"></budget-selector>      
+    <budget-creator :budgets="budgets" v-on="$listeners" class="mt-5" />
+
+    <budget-selector :budgets="budgets" v-on="$listeners" class="mt-5" />
   </nav>
 </template>
 
 <script>
+import BudgetCreator from './BudgetCreator.vue';
 import BudgetSelector from './BudgetSelector.vue'
+
 export default {
   components: {
+    BudgetCreator,
     BudgetSelector
   },
   props: ['budgets'],
