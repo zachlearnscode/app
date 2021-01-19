@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-sm container-fluid p-2 border bg-light rounded h-100">
+  <div class="shadow container-fluid p-2 border bg-light rounded h-100">
     <!-- Budget Header -->
     <budget-header
       :title="budget.title"
@@ -201,11 +201,13 @@ export default {
   },
   mounted() { //Delete expenditures that are created but cancelled
     this.$root.$on('bv::modal::hide', (bvEvent) => {
-      if (this.expenditureModal.modalTarget === "log") {
-        if (bvEvent.trigger === "cancel" ||
-            bvEvent.trigger === "backdrop" ||
-            bvEvent.trigger === "headerclose") {
-          this.deleteExpenditure(this.tempStorage.expenditure);
+      if (bvEvent.target.textContent.search("Reset Budget") < 0) {
+        if (this.expenditureModal.modalTarget === "log") {
+          if (bvEvent.trigger === "cancel" ||
+              bvEvent.trigger === "backdrop" ||
+              bvEvent.trigger === "headerclose") {
+            this.deleteExpenditure(this.tempStorage.expenditure);
+          }
         }
       }
     })

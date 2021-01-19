@@ -1,5 +1,5 @@
 <template>
-  <div style="width:100%">
+  <div class="w-100">
     <h3 class="text-white">View a Budget</h3>
     <b-form>
       <b-form-select size="lg" class="my-2" v-model="selectedBudget" :options="existingBudgets"></b-form-select>

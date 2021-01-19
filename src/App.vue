@@ -2,9 +2,11 @@
   <div id="app">
     <navbar
       :budgets="budgets"
+      :activeBudget="activeBudget"
       @create-budget="createBudget"
       @activate-budget="activateBudget"
-      class="px-5 w-25"
+      @reset-confirmed="resetActiveBudget"
+      class="px-5 w-25 h-100"
     />
     <div class="w-75 m-4 d-flex align-items-center justify-content-center" style="overflow:hidden">
       <div v-if="budgets.length === 0">
@@ -71,6 +73,15 @@ export default {
       }
 
       toActivate.active = true;
+    },
+    resetActiveBudget(activeBudget) {
+      let title = activeBudget.title;
+      let freshBudget = new Budget(title);
+
+      let index = this.budgets.indexOf(activeBudget);
+      this.budgets.splice(index, 1, freshBudget);
+
+      freshBudget.active = true;
     }
   }
 }
