@@ -1,33 +1,42 @@
 <template>
   <div class="container-fluid px-0">
-    <b-card body-tag="" class="container-fluid px-0 mb-2">
-      <template v-slot:header>
-        <div class="row px-0">
-          <div class="col lead">Date</div>
-          <div class="col lead">Merchant</div>
-          <div class="col lead">Spent</div>
-          <div class="col lead">Notes</div>
-        </div>
-      </template>
-    </b-card>
-    <transition-group
-      :css="false" :appear="true"
-      @before-appear="beforeAppear" @appear="appear"
+    <transition
+      appear
+      appear-active-class="animate__animated animate__slideInRight"
     >
-      <b-card
-        v-for="(expenditure, index) in expenditures"
-        :key="expenditure.timeLogged" :data-index="index"
-      >
-        <b-card-body class="p-0">
-          <div class="row">
-            <div class="col">{{expenditure.dateLogged}}</div>
-            <div class="col">{{expenditure.merchant}}</div>
-            <div class="col">{{expenditure.amount | currency}}</div>
-            <div class="col">{{expenditure.notes}}</div>
+      <b-card body-tag="" class="container-fluid px-0 mb-2 sticky-top">
+        <template v-slot:header>
+          <div class="row px-0">
+            <div class="col lead">Date</div>
+            <div class="col lead">Merchant</div>
+            <div class="col lead">Spent</div>
+            <div class="col lead">Notes</div>
           </div>
-        </b-card-body>
+        </template>
       </b-card>
-    </transition-group>
+    </transition>
+    <div>
+      <transition-group
+        :appear="true" @before-appear="beforeAppear" @appear="appear"
+        leave-active-class="animate__animated animate__fadeOut"
+      >
+        <b-card
+          v-for="(expenditure, index) in expenditures"
+          :key="expenditure.timeLogged" :data-index="index"
+          @click="$emit('ee-modal-requested', expenditure)"
+          @click.right.prevent="openDeleteExpenseModal(expenditure)"
+        >
+          <b-card-body class="p-0">
+            <div class="row">
+              <div class="col">{{expenditure.dateLogged}}</div>
+              <div class="col">{{expenditure.merchant}}</div>
+              <div class="col">{{expenditure.amount | currency}}</div>
+              <div class="col">{{expenditure.notes}}</div>
+            </div>
+          </b-card-body>
+        </b-card>
+      </transition-group>
+    </div>
   </div>  
 </template>
 
@@ -59,7 +68,7 @@ export default {
     appear(el) {
       let delay = el.dataset.index * 15;
       setTimeout(function() {
-        el.className = "container-fluid p-0 shadow-sm animate__animated animate__slideInUp"
+        el.className = "container-fluid bg-white p-0 mb-2 shadow-sm animate__animated animate__fadeIn"
       }, delay);
     }
   },
@@ -72,6 +81,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+  .moveClass {
+    transition: position .5s ease;
+  }
 
 </style>

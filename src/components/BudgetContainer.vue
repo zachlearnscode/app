@@ -16,7 +16,7 @@
       leave-active-class="animate__animated animate__fadeOut"
     >
       <div
-        id="bodyContainer"
+        class="bodyContainer"
         v-if="!expendituresView"
         key="budgetView"
       >
@@ -38,7 +38,7 @@
         v-else
         key="expenditureView"
         style="min-height:100vh-100px"
-        class="d-flex"
+        class="bodyContainer d-flex"
       >
         <expenses-container
           class="ml-auto"
@@ -215,7 +215,7 @@ export default {
 </script>
 
 <style scoped>
-  #bodyContainer {
+  .bodyContainer {
     max-height: 87%;
     overflow-x: hidden;
     overflow-y: scroll;

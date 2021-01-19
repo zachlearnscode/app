@@ -5,7 +5,7 @@
       @create-budget="createBudget"
       class="px-5 w-25"
     />
-    <div class="w-75 px-5 py-3 d-flex align-items-center justify-content-center" style="overflow:hidden">
+    <div class="w-75 m-3 d-flex align-items-center justify-content-center" style="overflow:hidden">
       <div v-if="budgets.length === 0">
         <div class="lead">No budgets to display.</div>
       </div>

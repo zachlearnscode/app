@@ -4,15 +4,12 @@
     <b-form>
       <b-form-select size="lg" class="my-2" v-model="selectedMonth" :options="months"></b-form-select>
       <b-form-select size="lg" class="my-2" v-model="selectedYear" :options="years"></b-form-select>
-      <div class="d-flex justify-content-end my-2">
-        <b-button-group size="lg">
-          <!--<button class="btn btn-primary" disabled>View</button>-->
-          <button
-            class="btn btn-primary ml-2"
-            @click.prevent="verifyNewBudget"
-          >Create</button>
-        </b-button-group>
-      </div>
+      <button
+        class="btn btn-lg btn-primary mt-2 w-100"
+        @click.prevent="verifyNewBudget"
+      >
+        Create
+      </button>     
     </b-form>
   </div>
 </template>
