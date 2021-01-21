@@ -5,7 +5,7 @@
       <b-form-select size="lg" class="my-2" v-model="selectedMonth" :options="months"></b-form-select>
       <b-form-select size="lg" class="my-2" v-model="selectedYear" :options="years"></b-form-select>
       <button
-        class="btn btn-lg btn-primary mt-2 w-100"
+        class="btn btn-lg btn-primary shadow-lg mt-2 w-100"
         @click.prevent="verifyNewBudget"
       >
         Create

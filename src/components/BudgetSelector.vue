@@ -6,7 +6,7 @@
       <button
         class="btn btn-lg btn-primary mt-2 w-100"
         @click.prevent="$emit('activate-budget', selectedBudget)"
-        :disabled="budgets.length < 1"
+        :disabled="budgets.length < 2"
       >
         View
       </button>     

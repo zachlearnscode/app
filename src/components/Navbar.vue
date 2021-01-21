@@ -14,11 +14,18 @@
     </div>
     <div class="w-100 h-25 d-flex flex-column justify-content-end">
       <button
-        class="btn btn-lg btn-danger w-100 mb-3"
+        class="btn btn-lg btn-danger shadow w-100 mb-3"
         :disabled="!activeBudget"
         @click.prevent="msgBoxConfirm"
       >
         Reset Budget
+      </button>
+      <button
+        class="btn btn-lg btn-primary shadow w-100 mb-3"
+        :disabled="!activeBudget"
+        @click.prevent="$emit('save-requested')"
+      >
+        Save Changes
       </button>
     </div>    
   </nav>

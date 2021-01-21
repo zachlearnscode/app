@@ -10,7 +10,7 @@
     />
     <div class="w-75 m-4 d-flex align-items-center justify-content-center" style="overflow:hidden">
       <div v-if="budgets.length === 0">
-        <div class="lead">No budgets to display.</div>
+        <div class="h3 font-weight-light text-muted">No budgets to display.</div>
       </div>
       <transition
         mode="out-in"
@@ -51,7 +51,6 @@ export default {
       } else {
         return null;
       }
-      
     }
   },
   methods: {
@@ -83,6 +82,41 @@ export default {
 
       freshBudget.active = true;
     }
+  },
+  created() {
+    let nb = new Budget();
+    nb.active = true;
+
+    let req = indexedDB.open('userData');
+
+    req.onsuccess = (event) => {
+      let db = event.target.result;
+      let os = db.transaction('budgets').objectStore('budgets');
+
+      os.openCursor().onsuccess = (event) => {
+        let cursor = event.target.result;
+        if (cursor) {
+          this.budgets.push(cursor.value);
+          cursor.continue();
+        } else {
+          return;
+        }
+      }
+    }
+
+    req.onupgradeneeded = (event) => {
+      let db = event.target.result;
+      let os = db.createObjectStore('budgets', {keyPath: 'title'});
+
+      os.transaction.oncomplete = () => {
+        db.transaction('budgets', 'readwrite')
+          .objectStore('budgets').add(nb);       
+      };
+    }
+
+    req.onerror = (event) => {
+      console.log('error', event);
+    }
   }
 }
 </script>
@@ -107,9 +141,6 @@ export default {
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
-  }
-  .budgetContainer {
-    max-height:calc(100vh - 84px);
   }
   #app {
     height: 100vh;

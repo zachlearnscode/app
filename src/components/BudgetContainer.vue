@@ -1,14 +1,14 @@
 <template>
-  <div class="shadow container-fluid p-2 border bg-light rounded h-100">
+  <div class="container-fluid p-2 border bg-light shadow rounded h-100">
     <!-- Budget Header -->
     <budget-header
       :title="budget.title"
-      :spent="budget.actualExpenses"
+      :spent="actualExpenses"
       :income="budget.income"
-      :budgeted="budget.budgetedExpenses"
+      :budgeted="budgetedExpenses"
       @form-requested="showForm"
       @expenditures-requested="switchView"
-    ></budget-header>
+    />
     <!-- Budget Body -->
     <transition
       mode="out-in"
@@ -41,7 +41,7 @@
       >
         <expenses-container
           class="ml-auto"
-          :expenditures="budget.allExpenditures"
+          :expenditures="allExpenditures"
           @delete-requested="deleteExpenditure"
           @ee-modal-requested="showExpenditureModal"
         ></expenses-container>
@@ -87,6 +87,46 @@ export default {
         expenditure: {},
         expCategory: "",
       }
+    }
+  },
+  computed: {
+    budgetedExpenses() {
+      let total = 0;
+
+      for (let c = 0; c < this.budget.categories.length; c++) {
+        for (let l = 0; l < this.budget.categories[c].lineItems.length; l++) {
+          total += this.budget.categories[c].lineItems[l].budgeted;
+        }
+      }
+      return total
+    },
+    actualExpenses() {
+      let total = 0;
+
+      for (let c = 0; c < this.budget.categories.length; c++) {
+        for (let l = 0; l < this.budget.categories[c].lineItems.length; l++) {
+          let lineItem = this.budget.categories[c].lineItems[l];
+          for (let e = 0; e < lineItem.expenditures.length; e++) {
+            total += lineItem.expenditures[e].amount;
+          }
+        }
+      }
+      return total
+    },
+    allExpenditures() {
+      let lineItemsArr = [];
+      let allExpenditures = [];
+
+      this.budget.categories.filter(c => c.lineItems.length > 0)
+        .forEach(c => lineItemsArr.push(...c.lineItems));
+      
+      lineItemsArr.forEach(l => {
+        for (let e = 0; e < l.expenditures.length; e++) {
+          allExpenditures.push(l.expenditures[e])
+        }
+      })
+
+      return allExpenditures
     }
   },
   methods: {

@@ -22,44 +22,6 @@ export class Budget {
     ],
     this.active = false
   }
-
-  get budgetedExpenses() {
-    let total = 0;
-
-    for (let c = 0; c < this.categories.length; c++) {
-      for (let l = 0; l < this.categories[c].lineItems.length; l++) {
-        total += this.categories[c].lineItems[l].budgeted;
-      }
-    }
-    return total
-  }
-
-  get actualExpenses() {
-    let total = 0;
-
-    for (let c = 0; c < this.categories.length; c++) {
-      for (let l = 0; l < this.categories[c].lineItems.length; l++) {
-        total += this.categories[c].lineItems[l].spent;
-      }
-    }
-    return total
-  }
-
-  get allExpenditures() {
-    let lineItemsArr = [];
-    let allExpenditures = [];
-
-    this.categories.filter(c => c.lineItems.length > 0)
-      .forEach(c => lineItemsArr.push(...c.lineItems));
-    
-    lineItemsArr.forEach(l => {
-      for (let e = 0; e < l.expenditures.length; e++) {
-        allExpenditures.push(l.expenditures[e])
-      }
-    })
-
-    return allExpenditures
-  }
 }
 
 export class BudgetCategory {
@@ -94,15 +56,6 @@ export class LineItem {
         notes: ""
       }
     }
-  }
-  get spent() {
-    let spent = 0;
-    if (this.expenditures.length) {
-      for (let e = 0; e < this.expenditures.length; e++) {
-        spent += this.expenditures[e].amount;
-      }
-    } 
-    return spent
   }
 }
 

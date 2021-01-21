@@ -2,14 +2,25 @@
   <div class="progress my-1 p-0" style="height:5px">
     <div
       class="progress-bar"
-      :class="calcProgress(lineItem.spent, lineItem.budgeted) <= 100 ? 'bg-success' : 'bg-danger'"
-      :style="'width:' + calcProgress(lineItem.spent, lineItem.budgeted) + '%'"></div>
+      :class="calcProgress(spent, lineItem.budgeted) <= 100 ? 'bg-success' : 'bg-danger'"
+      :style="'width:' + calcProgress(spent, lineItem.budgeted) + '%'"></div>
   </div>
 </template>
 
 <script>
 export default {
   props: ['lineItem'],
+  computed: {
+    spent() {
+      let spent = 0;
+      if (this.lineItem.expenditures.length) {
+        for (let e = 0; e < this.lineItem.expenditures.length; e++) {
+          spent += this.lineItem.expenditures[e].amount;
+        }
+      } 
+      return spent
+    }
+  },
   methods: {
     calcProgress(actual, budgeted) {
       let quo
