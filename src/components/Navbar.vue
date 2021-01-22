@@ -20,13 +20,6 @@
       >
         Reset Budget
       </button>
-      <button
-        class="btn btn-lg btn-primary shadow w-100 mb-3"
-        :disabled="!activeBudget"
-        @click.prevent="$emit('save-requested')"
-      >
-        Save Changes
-      </button>
     </div>    
   </nav>
 </template>

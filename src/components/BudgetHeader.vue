@@ -109,6 +109,8 @@ export default {
         obj.editing.form = false;
         obj.editing.vModel = 0;
       }
+
+      this.$emit('budget-updated');
     },
   },
   filters: {

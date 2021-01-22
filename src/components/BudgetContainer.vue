@@ -8,6 +8,7 @@
       :budgeted="budgetedExpenses"
       @form-requested="showForm"
       @expenditures-requested="switchView"
+      v-on="$listeners"
     />
     <!-- Budget Body -->
     <transition
@@ -30,6 +31,7 @@
             :category="category"
             @form-requested="showForm"
             @log-modal-requested="showExpenditureModal"
+            v-on="$listeners"
             :data-index="index"
           ></category-container>
         </transition-group>
@@ -219,15 +221,30 @@ export default {
     logExpenditure(merchant, amount, notes) {
       let expenditure = this.locateExpenditure(this.tempStorage.expenditure)
         .find(e => e.timeLogged === this.tempStorage.expenditure.timeLogged);
-      
-      expenditure.merchant = merchant;
-      expenditure.amount = amount;
-      expenditure.notes = notes;
+
+      if (this.expenditureModal.modalTarget === "log") {
+          expenditure.merchant = merchant;
+          expenditure.amount = amount;
+          expenditure.notes = notes;
+      } else if (this.expenditureModal.modalTarget === 'edit') {
+          if (merchant) {
+            expenditure.merchant = merchant;
+          }
+          if (amount) {
+            expenditure.amount = amount;
+          }
+          if (notes) {
+            expenditure.notes = notes;
+          }
+        } 
+
+      this.$emit('budget-updated');
     },
     deleteExpenditure(expenditure) {
       let expendituresArray = this.locateExpenditure(expenditure);
       expendituresArray.splice(expendituresArray.indexOf(expenditure), 1);
-      
+
+      this.$emit('budget-updated');      
     },
     beforeAppear(el) {
       el.className = "d-none";
@@ -241,7 +258,9 @@ export default {
   },
   mounted() { //Delete expenditures that are created but cancelled
     this.$root.$on('bv::modal::hide', (bvEvent) => {
-      if (bvEvent.target.textContent.search("Reset Budget") < 0) {
+      if (bvEvent.target.textContent.search("Reset Budget") < 0 &&
+          bvEvent.target.innerText.search("Delete Expenditure") < 0) {
+
         if (this.expenditureModal.modalTarget === "log") {
           if (bvEvent.trigger === "cancel" ||
               bvEvent.trigger === "backdrop" ||

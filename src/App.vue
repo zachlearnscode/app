@@ -6,6 +6,7 @@
       @create-budget="createBudget"
       @activate-budget="activateBudget"
       @reset-confirmed="resetActiveBudget"
+      @save-requested="saveProgress"
       class="px-5 w-25 h-100"
     />
     <div class="w-75 m-4 d-flex align-items-center justify-content-center" style="overflow:hidden">
@@ -21,6 +22,7 @@
           v-if="budgets.length > 0"
           :budget="activeBudget"
           :key="activeBudget.title"
+          @budget-updated="saveProgress(activeBudget.title), 'data'"
         />
       </transition>
     </div>
@@ -56,22 +58,21 @@ export default {
   methods: {
     createBudget(budgetTitle) {
       let newBudget = new Budget(budgetTitle);
-      newBudget.active = true;
-
-      if (this.budgets.length > 0) {
-        this.budgets.find(b => b.active).active = false;
-      }      
-
       this.budgets.push(newBudget);
+      
+      this.activateBudget(newBudget.title);
     },
     activateBudget(budgetTitle) {
       let toActivate = this.budgets.find(b => b.title === budgetTitle);
 
-      if (this.budgets.length > 0) {
-        this.budgets.find(b => b.active).active = false;
-      }
+      let currentlyActive = this.budgets.find(b => b.active);
+      if (currentlyActive) {
+        currentlyActive.active = false;
+        this.saveProgress(currentlyActive.title);
+      }      
 
       toActivate.active = true;
+      this.saveProgress(toActivate.title);
     },
     resetActiveBudget(activeBudget) {
       let title = activeBudget.title;
@@ -81,12 +82,69 @@ export default {
       this.budgets.splice(index, 1, freshBudget);
 
       freshBudget.active = true;
+
+      this.saveProgress(activeBudget.title, 'data')
+    },
+    saveProgress(budgetTitle, target) {
+      let req = indexedDB.open('userData');
+
+      req.onerror = function() {
+        alert('Error saving changes.')
+      }
+
+      req.onsuccess = (event) => {
+        let db = event.target.result;
+        let trans = db.transaction('budgets', 'readwrite');
+
+        let os = trans.objectStore('budgets');
+
+        if (target === 'data') {
+          let reqBudget = os.get(budgetTitle);
+
+          reqBudget.onsuccess = (event) => {
+            let budget = event.target.result;
+            budget = this.activeBudget;
+
+            let updateBudget = os.put(budget);
+
+            updateBudget.onsuccess = () => {
+              console.log(budgetTitle + ' updated')
+            };
+
+            updateBudget.onerror = () => {
+              console.log("Couldn't update " + budgetTitle)
+            }
+          };
+        } else {
+          this.budgets.forEach(budget => {
+            os.put(budget);
+          })
+        }
+
+        trans.onerror = () => {
+          console.log('Error saving progress')
+        };
+
+      }
     }
   },
-  created() {
-    let nb = new Budget();
-    nb.active = true;
+  beforeCreate() {
+    let req = indexedDB.open('userData');
 
+    req.onupgradeneeded = (event) => {
+      let db = event.target.result;
+      db.createObjectStore('budgets', {keyPath: 'title'});
+    }
+
+    req.onsuccess = () => {
+      return;
+    }
+
+    req.onerror = () => {
+      console.log('Error accessing database');
+    }
+  },
+  beforeMount() {
     let req = indexedDB.open('userData');
 
     req.onsuccess = (event) => {
@@ -102,20 +160,6 @@ export default {
           return;
         }
       }
-    }
-
-    req.onupgradeneeded = (event) => {
-      let db = event.target.result;
-      let os = db.createObjectStore('budgets', {keyPath: 'title'});
-
-      os.transaction.oncomplete = () => {
-        db.transaction('budgets', 'readwrite')
-          .objectStore('budgets').add(nb);       
-      };
-    }
-
-    req.onerror = (event) => {
-      console.log('error', event);
     }
   }
 }

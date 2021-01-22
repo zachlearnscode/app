@@ -32,8 +32,12 @@ export default {
           return quo = 101;
         }
       } else {
-        return quo = 0;
-      }
+          if (actual > 0) {
+            return quo = 101;
+          } else {
+            return quo = 0;
+          }
+        }
     }
   }
 

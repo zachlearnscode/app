@@ -65,7 +65,9 @@ export default {
     },
     removeLineItem(lineItem) {
       let c = this.category.lineItems;
-      c.splice(c.indexOf(c.find(l => l.label === lineItem.label)), 1)
+      c.splice(c.indexOf(c.find(l => l.label === lineItem.label)), 1);
+
+      this.$emit('budget-updated');
     }
   }
 }

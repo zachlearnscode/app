@@ -128,10 +128,14 @@ export default {
         obj.label = obj.editing.vModels.label;
         obj.editing.toggles.inline.newLabelForm = false;
         obj.editing.vModels.label = "";
+
+        this.$emit('budget-updated');
       } else if (target === "amount") {
         obj.budgeted = obj.editing.vModels.amount;
         obj.editing.toggles.inline.newAmountForm = false;
         obj.editing.vModels.amount = 0;
+
+        this.$emit('budget-updated');
       } else if (target === "newLineItem") {
         if (obj.editing.vModels.label !== "") {
           obj.label = obj.editing.vModels.label;
@@ -140,6 +144,8 @@ export default {
         obj.editing.toggles.inline.newLineItemForm = false;
         obj.editing.vModels.label = "";
         obj.editing.vModels.amount = 0;
+
+        this.$emit('budget-updated');
       } else {
         this.$emit('change-submitted', obj, target);
       }

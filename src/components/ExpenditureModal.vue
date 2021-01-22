@@ -53,7 +53,7 @@ export default {
       this.$refs.merchantInput.focus()
     },
     logExpenditure() {
-      this.$emit('log-expenditure', this.merchant, this.amount, this.notes);
+      this.$emit('log-expenditure', this.merchant, this.amount, this.notes, this.target);
 
       this.merchant = "";
       this.amount = 0;

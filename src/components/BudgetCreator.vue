@@ -44,8 +44,7 @@ export default {
     }
   },
   watch: {
-    selectedMonth: 'disableOptions',
-    selectedYear: 'disableOptions'
+    selectedYear: 'toggleDisabled'
   },
   methods: {
     verifyNewBudget() {
@@ -60,18 +59,22 @@ export default {
         console.log('Month Required');
       }
     },
-    disableOptions() {
-      let existing = this.budgets.map(b => b.title);
-      
-      for (let m = 0; m < this.months.length; m++) {
-        if (existing.includes(this.months[m].text + ' ' + this.selectedYear)) {
+    toggleDisabled() {
+      if (this.selectedYear === this.years[0].value) {
+        let currentMonth = new Date().getMonth();
+        for (let m = currentMonth; m >= 0; m--) {
           this.months[m].disabled = true;
-          this.months[m].html
-        } else {
-          this.months[m].disabled = false;
         }
+      } else {
+        this.months.forEach(m => {
+          m.disabled = false;
+        });
       }
     }
+  },
+  beforeMount() {
+    //Disables past months in current year
+    this.toggleDisabled();
   }
 }
 </script>
