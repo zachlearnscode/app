@@ -9,16 +9,23 @@
         </div>
         <span class="h3 font-weight-light">Know your worth.</span>
       </div>
-      <budget-creator :budgets="budgets" v-on="$listeners" class="mt-5" />
-      <budget-selector :budgets="budgets" v-on="$listeners" class="mt-5" />
+      <budget-creator :budgets="budgets" :demoMode="demoMode" v-on="$listeners" class="mt-5" />
+      <budget-selector :budgets="budgets" :demoMode="demoMode" v-on="$listeners" class="mt-5" />
     </div>
     <div class="w-100 h-25 d-flex flex-column justify-content-end">
       <button
         class="btn btn-lg btn-danger shadow w-100 mb-3"
-        :disabled="!activeBudget"
+        :disabled="!activeBudget || demoMode"
         @click.prevent="msgBoxConfirm"
       >
         Reset Budget
+      </button>
+      <button
+        class="btn btn-lg btn-primary shadow w-100 mb-3"
+        v-if="demoMode"
+        @click.prevent="$emit('exit-demo')"
+      >
+        Exit Demo
       </button>
     </div>    
   </nav>
@@ -33,10 +40,10 @@ export default {
     BudgetCreator,
     BudgetSelector
   },
-  props: ['budgets', 'activeBudget'],
+  props: ['budgets', 'activeBudget', 'demoMode'],
   data() {
     return {
-      resetClicked: false
+     //
     }
   },
   methods: {

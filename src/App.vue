@@ -3,26 +3,33 @@
     <navbar
       :budgets="budgets"
       :activeBudget="activeBudget"
+      :demoMode="demoMode"
       @create-budget="createBudget"
       @activate-budget="activateBudget"
       @reset-confirmed="resetActiveBudget"
-      @save-requested="saveProgress"
+      @exit-demo="exitDemo"
       class="px-5 w-25 h-100"
     />
     <div class="w-75 m-4 d-flex align-items-center justify-content-center" style="overflow:hidden">
-      <div v-if="budgets.length === 0">
+      <div v-if="budgets.length === 0" class="d-flex flex-column align-items-center">
         <div class="h3 font-weight-light text-muted">No budgets to display.</div>
+        <div class="h5 d-flex align-items-center">
+          First time here?
+          <button class="btn btn-lg btn-link" @click.prevent="createDemo">
+            Experiment with a demo budget.
+          </button>
+        </div>
       </div>
       <transition
+        v-else-if="activeBudget"
         mode="out-in"
         enter-active-class="animate__animated animate__fadeInRightBig"
         leave-active-class="animate__animated animate__fadeOutRightBig"
       >
         <budget-container
-          v-if="budgets.length > 0"
           :budget="activeBudget"
           :key="activeBudget.title"
-          @budget-updated="saveProgress(activeBudget.title), 'data'"
+          @budget-updated="saveChanges(activeBudget)" 
         />
       </transition>
     </div>
@@ -34,6 +41,7 @@
 import Navbar from './components/Navbar.vue';
 import BudgetContainer from './components/BudgetContainer.vue';
 import { Budget } from './modules/BudgetClasses.js';
+import { demoBudget } from './modules/BudgetClasses.js';
 
 export default {
   name: 'App',
@@ -43,12 +51,13 @@ export default {
   },
   data() {
     return {
-     budgets: []
+     budgets: [],
+     demoMode: false
     }
   },
   computed: {
     activeBudget() {
-      if (this.budgets.length) {
+      if (this.budgets.length > 0) {
         return this.budgets.find(b => b.active);
       } else {
         return null;
@@ -59,7 +68,9 @@ export default {
     createBudget(budgetTitle) {
       let newBudget = new Budget(budgetTitle);
       this.budgets.push(newBudget);
-      
+
+      this.addBudget(newBudget);
+
       this.activateBudget(newBudget.title);
     },
     activateBudget(budgetTitle) {
@@ -68,11 +79,11 @@ export default {
       let currentlyActive = this.budgets.find(b => b.active);
       if (currentlyActive) {
         currentlyActive.active = false;
-        this.saveProgress(currentlyActive.title);
       }      
 
       toActivate.active = true;
-      this.saveProgress(toActivate.title);
+
+      this.saveChanges(toActivate, currentlyActive)
     },
     resetActiveBudget(activeBudget) {
       let title = activeBudget.title;
@@ -83,83 +94,84 @@ export default {
 
       freshBudget.active = true;
 
-      this.saveProgress(activeBudget.title, 'data')
     },
-    saveProgress(budgetTitle, target) {
+    createDemo() {
+      this.demoMode = true;      
+      return this.budgets.push(demoBudget);
+    },
+    exitDemo() {
+      this.demoMode = false;
+      return this.budgets.splice(demoBudget, 1);
+    },
+    addBudget(budget) {
       let req = indexedDB.open('userData');
-
-      req.onerror = function() {
-        alert('Error saving changes.')
-      }
 
       req.onsuccess = (event) => {
         let db = event.target.result;
-        let trans = db.transaction('budgets', 'readwrite');
+        let os = db.transaction('budgets', 'readwrite').objectStore('budgets');
 
-        let os = trans.objectStore('budgets');
-
-        if (target === 'data') {
-          let reqBudget = os.get(budgetTitle);
-
-          reqBudget.onsuccess = (event) => {
-            let budget = event.target.result;
-            budget = this.activeBudget;
-
-            let updateBudget = os.put(budget);
-
-            updateBudget.onsuccess = () => {
-              console.log(budgetTitle + ' updated')
-            };
-
-            updateBudget.onerror = () => {
-              console.log("Couldn't update " + budgetTitle)
-            }
-          };
-        } else {
-          this.budgets.forEach(budget => {
-            os.put(budget);
-          })
-        }
-
-        trans.onerror = () => {
-          console.log('Error saving progress')
-        };
-
+        return os.add(budget);
       }
+    },
+    saveChanges(budget1, budget2) {
+      let req = indexedDB.open('userData');
+
+      req.onsuccess = (event) => {
+        if (budget1 && budget2) {
+          let db = event.target.result;
+          let os = db.transaction('budgets', 'readwrite').objectStore('budgets');
+          os.get(budget1.title).onsuccess = (event) => {
+            console.log(event.target.result)
+            let budget = event.target.result;
+            budget.active = true;
+
+            return os.put(budget)
+          };
+
+          os.get(budget2.title).onsuccess = (event) => {
+            console.log(event.target.result)
+            let budget = event.target.result;
+            budget.active = false;
+
+            return os.put(budget)
+          }
+
+        } else {
+            let db = event.target.result;
+            let os = db.transaction('budgets', 'readwrite').objectStore('budgets');
+            os.get(budget1.title).onsuccess = (event) => {
+              let budget = event.target.result;
+              budget = this.activeBudget;
+
+              return os.put(budget)
+            };
+        }
+      }
+
     }
   },
   beforeCreate() {
     let req = indexedDB.open('userData');
-
     req.onupgradeneeded = (event) => {
       let db = event.target.result;
       db.createObjectStore('budgets', {keyPath: 'title'});
+      console.log("upgraded")
     }
-
-    req.onsuccess = () => {
-      return;
-    }
-
-    req.onerror = () => {
-      console.log('Error accessing database');
-    }
-  },
-  beforeMount() {
-    let req = indexedDB.open('userData');
-
     req.onsuccess = (event) => {
       let db = event.target.result;
       let os = db.transaction('budgets').objectStore('budgets');
-
       os.openCursor().onsuccess = (event) => {
         let cursor = event.target.result;
+        console.log("Opening Cursor")
         if (cursor) {
+          console.log("Cursoring")
           this.budgets.push(cursor.value);
           cursor.continue();
-        } else {
-          return;
         }
       }
+    }
+    req.onerror = () => {
+      console.log('Error accessing database');
     }
   }
 }

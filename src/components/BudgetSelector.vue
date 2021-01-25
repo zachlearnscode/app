@@ -6,9 +6,9 @@
       <button
         class="btn btn-lg btn-primary mt-2 w-100"
         @click.prevent="$emit('activate-budget', selectedBudget)"
-        :disabled="budgets.length < 2"
+        :disabled="budgets.length < 2 || demoMode"
       >
-        View
+        {{demoMode ? "Disabled in Demo" : "View"}}
       </button>     
     </b-form>
   </div>
@@ -18,7 +18,7 @@
 
 
 export default {
-  props: ['budgets'],
+  props: ['budgets', 'demoMode'],
   data() {
     return {
       selectedBudget: null,

@@ -7,8 +7,9 @@
       <button
         class="btn btn-lg btn-primary shadow-lg mt-2 w-100"
         @click.prevent="verifyNewBudget"
+        :disabled="demoMode"
       >
-        Create
+        {{demoMode ? "Disabled in Demo" : "Create"}}
       </button>     
     </b-form>
   </div>
@@ -16,7 +17,7 @@
 
 <script>
 export default {
-  props: ['budgets'],
+  props: ['budgets', 'demoMode'],
   data() {
     return {
       selectedMonth: null,
